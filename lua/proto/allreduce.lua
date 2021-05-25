@@ -11,7 +11,7 @@
 --[[
 -- Use this file as template when implementing a new protocol (to implement all mandatory stuff)
 -- Replace all occurrences of allreduce with your protocol (e.g. sctp)
--- Remove unnecessary comments in this file (comments inbetween [[...]])
+-- Remove unnecessary comments in this file (comments inbetween [[...]]
 -- Necessary changes to other files:
 -- - packet.lua: if the header has a length member, adapt packetSetLength; 
 -- 				 if the packet has a checksum, adapt createStack (loop at end of function) and packetCalculateChecksums
@@ -181,7 +181,7 @@ function allreduceHeader:setOperatorBypassMc(int)
 end
 
 function allreduceHeader:getOperatorBypassMc(int)
-	return self.operator_bypass_pad_mc = int
+	return self.operator_bypass_pad_mc
 end
 
 function allreduceHeader:getOperatorBypassMcString(int)
