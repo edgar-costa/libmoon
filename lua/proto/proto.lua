@@ -8,6 +8,7 @@ local proto = {}
 proto.eth = require "proto.ethernet"
 proto.ethernet = proto.eth
 proto.ip4 = require "proto.ip4"
+proto.allreduce = require "proto.allreduce"
 proto.ip6 = require "proto.ip6"
 proto.arp = require "proto.arp"
 proto.icmp = require "proto.icmp"
