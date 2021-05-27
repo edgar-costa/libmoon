@@ -869,6 +869,10 @@ pkt.getEthVlanPacket = pkt.getEthernetVlanPacket
 pkt.getEthernetQinQPacket = createStack({"eth", subType = "qinq"})
 pkt.getEthQinQPacket = pkt.getEthernetQinQPacket
 
+-- all reduce packet
+
+pkt.getAllReducePacket = createStack("eth", "allreduce")
+
 pkt.getIP4Packet = createStack("eth", "ip4") 
 pkt.getIP6Packet = createStack("eth", "ip6")
 pkt.getIPPacket = function(self, ip4) 

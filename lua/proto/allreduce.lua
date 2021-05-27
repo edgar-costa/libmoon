@@ -55,6 +55,8 @@ allreduce.headerFormat = [[
 	uint32_t data[32];
 ]]
 
+-- header length = 4 + 4 + 2 +2 + 4 + 4 +1+ 1+ 1+ 1+ (4*32) = 152
+
 --- Variable sized member
 allreduce.headerVariableMember = nil
 
@@ -196,6 +198,7 @@ function allreduceHeader:setData(data)
 end
 
 -- TODO ... not sure about this
+-- TODO maybe the name has to be changed
 function allreduceHeader:getData()
 	return self.data
 end
