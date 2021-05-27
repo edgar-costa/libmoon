@@ -34,6 +34,8 @@ local format = string.format
 ---- allreduce constants 
 ---------------------------------------------------------------------------
 
+local ALLREDUCE_DATA_LENGTH = 32
+
 --- allreduce protocol constants
 local allreduce = {}
 
@@ -190,10 +192,21 @@ function allreduceHeader:getOperatorBypassMcString(int)
 	return self:getOperatorBypassMc()
 end
 
+function allreduceHeader:setDataValue(index, value)
+	value = value or 0
+	self.data[index] = value
+end
+
 function allreduceHeader:setData(data)
-	-- maybe set to 0 somehow
-	for i, x in ipairs(data) do
-		self.data[i] = hton(data)
+	-- 0 or the one we set
+	if not data then
+		for i = 1, ALLREDUCE_DATA_LENGTH do
+			self.data[i - 1] = hton(0);
+	    end
+	else 
+		for i, x in ipairs(data) do
+			self.data[i] = hton(data)
+		end
 	end
 end
 
@@ -222,7 +235,7 @@ function allreduceHeader:fill(args, pre)
 	self.next_children_slice = 0
 	self.dont_wait_multicast = 0
 
-	self:setID(args[pre .. "ID"])
+	self:setId(args[pre .. "Id"])
 	self:setNodesReduced(args[pre .. "NodesReduced"])
 	self:setNodes(args[pre .. "Nodes"])
 	self:setOperatorBypassMc(args[pre .. "OperatorBypassMc"])

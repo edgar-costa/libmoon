@@ -37,6 +37,9 @@ eth.TYPE_IP6 = 0x86dd
 --- EtherType for Ptp
 eth.TYPE_PTP = 0x88f7
 
+--- EtherType for Allreduce
+eth.TYPE_ALLREDUCE = 0xAAAA
+
 eth.TYPE_8021Q = 0x8100
 
 --- EtherType for LACP (Actually, 'Slow Protocols')
@@ -307,6 +310,8 @@ function etherHeader:getTypeString()
 		cleartext = "(IP6)"
 	elseif type == eth.TYPE_ARP then
 		cleartext = "(ARP)"
+	elseif type == eth.TYPE_ALLREDUCE then
+		cleartext = "(ALLREDUCE)"
 	elseif type == eth.TYPE_PTP then
 		cleartext = "(PTP)"
 	elseif type == eth.TYPE_LACP then
@@ -433,6 +438,7 @@ local mapNameType = {
 	ip4 = eth.TYPE_IP,
 	ip6 = eth.TYPE_IP6,
 	arp = eth.TYPE_ARP,
+	allreduce = eth.TYPE_ALLREDUCE, 
 	ptp = eth.TYPE_PTP, 
 	lacp = eth.TYPE_LACP,
 }
