@@ -32,7 +32,7 @@ local bor, band, bnot, rshift, lshift= bit.bor, bit.band, bit.bnot, bit.rshift, 
 local format = string.format
 local istype = ffi.istype
 
-
+ 
 --------------------------------------------------------------------------------------------------------
 ---- ARP constants (c.f. http://www.iana.org/assignments/arp-parameters/arp-parameters.xhtml)
 --------------------------------------------------------------------------------------------------------

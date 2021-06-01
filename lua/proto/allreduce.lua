@@ -90,7 +90,7 @@ end
 
 --- Retrieve the XYZ as string.
 --- @return XYZ as string.
-function allreduceHeader:getDestString()
+function allreduceHeader:getDstString()
 	return self.dst:getString()
 end
 
@@ -192,12 +192,15 @@ function allreduceHeader:getOperatorBypassMcString(int)
 	return self:getOperatorBypassMc()
 end
 
+-- even though lua indexes start at 0, since the underlying data is c...
+
 function allreduceHeader:setDataValue(index, value)
 	value = value or 0
 	self.data[index] = value
 end
 
 function allreduceHeader:setData(data)
+	--print("")
 	-- 0 or the one we set
 	if not data then
 		for i = 1, ALLREDUCE_DATA_LENGTH do
@@ -205,8 +208,10 @@ function allreduceHeader:setData(data)
 	    end
 	else 
 		for i, x in ipairs(data) do
-			self.data[i] = hton(data)
+			--print("index " .. i .. " " .. x)
+			self.data[i - 1] = hton(x)
 		end
+		-- self.data[0] = 1
 	end
 end
 
@@ -214,6 +219,13 @@ end
 -- TODO maybe the name has to be changed
 function allreduceHeader:getData()
 	return self.data
+end
+
+function allreduceHeader:printData()
+	print("Data Values:")
+	for i = 1, ALLREDUCE_DATA_LENGTH do
+		print(i-1 .. " -> " .. hton(self.data[i-1])) -- 24 bits shifted? why?
+	end
 end
 
 --- Set all members of the allreduce header.
@@ -239,7 +251,6 @@ function allreduceHeader:fill(args, pre)
 	self:setNodesReduced(args[pre .. "NodesReduced"])
 	self:setNodes(args[pre .. "Nodes"])
 	self:setOperatorBypassMc(args[pre .. "OperatorBypassMc"])
-	self:setData(args[pre .. "Data"])
 
 	local switch_addr = pre .. "SwitchAddress"
 	local dst = pre .. "Dst"
@@ -259,7 +270,7 @@ function allreduceHeader:fill(args, pre)
 		self:setDst(args[dst])
 	end
 
-	-- set data ?
+	self:setData(args[pre .. "Data"])
 
 end
 
