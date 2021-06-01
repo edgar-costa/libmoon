@@ -132,7 +132,7 @@ end
 --- Retrieve the id number.
 --- @return id number as 32 bit unsigned int in lua Number format
 function allreduceHeader:getId()
-	return tonumber(uint32(hton(self.id)))
+	return (hton(self.id))
 end
 
 --- Retrieve the sequence number.
@@ -196,7 +196,7 @@ end
 
 function allreduceHeader:setDataValue(index, value)
 	value = value or 0
-	self.data[index] = value
+	self.data[index] = hton(value)
 end
 
 function allreduceHeader:setData(data)
@@ -242,6 +242,7 @@ function allreduceHeader:fill(args, pre)
 	pre = pre or "allreduce"
 
 	-- thing we set to 0 always
+	-- do i need hton?-
 	self.children = 0
 	self.misc2 = 0
 	self.next_children_slice = 0
@@ -283,7 +284,13 @@ function allreduceHeader:get(pre)
 
 	local args = {}
 
-	-- args[pre .. "allreduceXYZ"] = self:getXYZ() 
+	args[pre .. "Dst"] = self:getDstString()
+	args[pre .. "SwitchAddress"] = self:getSwitchAddrString()
+	args[pre .. "Id"] = self:getId()
+	args[pre .. "NodesReduced"] = self:getNodesReduced()
+	args[pre .. "Nodes"] = self:getNodes()
+	args[pre .. "OperatorBypassMc"] = self:getOperatorBypassMc()
+	args[pre .. "Data"] = self:getData()
 
 	return args
 end
@@ -291,8 +298,23 @@ end
 --- Retrieve the values of all members.
 --- @return Values in string format.
 function allreduceHeader:getString()
-	return "allreduce " -- .. self:getXYZString()
-end
+	local pkt_str = "ALLREDUCE "
+	local data_str = "\nData Values: \n"
+	for key, value in pairs(self:get("")) do
+		if key ~= "Data" then
+			pkt_str =  pkt_str .. " " .. key .. " > " .. value .. " |"
+		else 
+			for i = 1, ALLREDUCE_DATA_LENGTH do
+				data_str = data_str .. (i-1 .. ":" .. hton(self.data[i-1]) .. " ") 
+				-- split it a bit
+				if i % 16 == 0 then
+					data_str = data_str .. "\n"
+				end
+			end
+		end
+	end
+	return pkt_str .. data_str
+end	
 
 --- Resolve which header comes after this one (in a packet)
 --- For instance: in tcp/udp based on the ports
