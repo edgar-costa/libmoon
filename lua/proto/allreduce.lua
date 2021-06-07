@@ -215,10 +215,19 @@ function allreduceHeader:setData(data)
 	end
 end
 
--- TODO ... not sure about this
 -- TODO maybe the name has to be changed
 function allreduceHeader:getData()
 	return self.data
+end
+
+function allreduceHeader:aggregateData(pkt, id)
+	
+	-- also set the packet id while we aggregated (might be faster?)
+	self:setId(id)
+
+	for i = 1 , ALLREDUCE_DATA_LENGTH do
+		self.data[i - 1] = hton(hton(self.data[i-1]) + hton(pkt.data[i - 1]) + id)
+	end
 end
 
 function allreduceHeader:printData()
