@@ -48,13 +48,16 @@ allreduce.headerFormat = [[
 	uint32_t id;
 	uint16_t nodes_reduced;
 	uint16_t nodes;
-	uint16_t children;
+	uint32_t children;
 	union ip4_address switch_addr;
-	uint8_t operator_bypass_mc_ignore_mc;
+	uint8_t operator_bypass_pad_mc;
+	uint8_t misc2;
+	uint8_t next_children_slice;
+	uint8_t dont_wait_multicast;
 	uint32_t data[32];
 ]]
 
--- header length = 4 + 4 + 2 +2 + 2 + 4 + 1+ (4*32) = 147
+-- header length = 4 + 4 + 2 +2 + 4 + 4 +1+ 1+ 1+ 1+ (4*32) = 152
 
 --- Variable sized member
 allreduce.headerVariableMember = nil
@@ -178,11 +181,11 @@ end
 
 function allreduceHeader:setOperatorBypassMc(int)
 	int = int or 0 
-	self.operator_bypass_mc_ignore_mc = int
+	self.operator_bypass_pad_mc = int
 end
 
 function allreduceHeader:getOperatorBypassMc(int)
-	return self.operator_bypass_mc_ignore_mc
+	return self.operator_bypass_pad_mc
 end
 
 function allreduceHeader:getOperatorBypassMcString(int)
@@ -259,6 +262,9 @@ function allreduceHeader:fill(args, pre)
 	-- thing we set to 0 always
 	-- do i need hton?-
 	self.children = 0
+	self.misc2 = 0
+	self.next_children_slice = 0
+	self.dont_wait_multicast = 0
 
 	self:setId(args[pre .. "Id"])
 	self:setNodesReduced(args[pre .. "NodesReduced"])
@@ -295,7 +301,7 @@ function allreduceHeader:get(pre)
 	pre = pre or "allreduce"
 
 	local args = {}
-	
+
 	args[pre .. "Dst"] = self:getDstString()
 	args[pre .. "SwitchAddress"] = self:getSwitchAddrString()
 	args[pre .. "Id"] = self:getId()

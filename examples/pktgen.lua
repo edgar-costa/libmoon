@@ -9,7 +9,7 @@ local server = require "webserver"
 
 -- set addresses here
 local DST_MAC       = nil -- resolved via ARP on GW_IP or DST_IP, can be overriden with a string here
-local PKT_LEN       = 60
+local PKT_LEN       = 166
 local SRC_IP        = "10.0.0.10"
 local DST_IP        = "10.1.0.10"
 local SRC_PORT_BASE = 1234 -- actual port will be SRC_PORT_BASE * random(NUM_FLOWS)
